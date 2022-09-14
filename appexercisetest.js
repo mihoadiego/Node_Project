@@ -36,15 +36,15 @@ const server = http.createServer((req, res) => {
       body.push(chunk);
     });
     
-    req.on('end', () => { // 'end', ie when data has been totally read, means that we are at the bus stop (ie buffer)
+    return req.on('end', () => { // 'end', ie when data has been totally read, means that we are at the bus stop (ie buffer)
       const parsedBody = Buffer.concat(body).toString();
       const message = parsedBody.split('=')[1]; // message will be something like 'message=_______' confere part 1 <input  name='message'/>
       fs.writeFileSync('message.txt', message);
+      res.statusCode = 302;
+      res.setHeader('Location', '/'); // will redirect to / url
+      return res.end();
     });
     
-    res.statusCode = 302;
-    res.setHeader('Location', '/'); // will redirect to / url
-    return res.end();
   }
   
   /**
