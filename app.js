@@ -1,4 +1,14 @@
-// to run such file, simply type node appexercisetest.js in the terminal, in the associated folder
+// to run such file, 
+// option 1 : simply type node app.js in the terminal, in the associated folder
+// option 2:  do as recommanded, by first typing a npm init in the terminal, at the root of your folder,
+// then run npm install nodemon --save-dev     (to install nodemon for dev environment only)
+// and then access the auto created  package.json file by adding the below section in the scripts key
+//      "scripts": {
+//          "test": "echo \"Error: no test specified\" && exit 1",
+//          "start": "nodemon app.js"
+//       },
+// then type npm install in the terminal
+// and then simply run the app by typing npm start in your terminal 
 
 
 const http = require('http');
@@ -7,7 +17,7 @@ const fs = require('fs');
 const server = http.createServer((req, res) => {
   const url = req.url;
   const method = req.method;
-  
+
   /**
    * part 1 : create and return an html form if url is strictly http://localhost:3000/
    */
@@ -27,7 +37,7 @@ const server = http.createServer((req, res) => {
   /**
    * part 2 : part 1, if form is submited, will lead us at this point (ie http://localhost:3000/message url with a post method
    */
-   
+
   if (url === '/message' && method === 'POST') {
     const body = [];
     //Buffer is like a bus stop. so we will concat all the chunks when the bus stops, (bus stop = ie when the data coming from req has been totally read)
@@ -39,10 +49,11 @@ const server = http.createServer((req, res) => {
     return req.on('end', () => { // 'end', ie when data has been totally read, means that we are at the bus stop (ie buffer)
       const parsedBody = Buffer.concat(body).toString();
       const message = parsedBody.split('=')[1]; // message will be something like 'message=_______' confere part 1 <input  name='message'/>
-      fs.writeFileSync('message.txt', message);
-      res.statusCode = 302;
-      res.setHeader('Location', '/'); // will redirect to / url
-      return res.end();
+      fs.writeFile('message.txt', message, err => {
+        res.statusCode = 302;
+        res.setHeader('Location', '/'); // to redirect back to http://localhost:3000/
+        return res.end();
+      });
     });
     
   }

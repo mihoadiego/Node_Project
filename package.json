@@ -1,0 +1,23 @@
+{
+  "name": "node_project",
+  "version": "1.0.0",
+  "description": "node project to understand better how main features/functionalities work",
+  "main": "appexercisetest.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mihoadiego/Node_Project.git"
+  },
+  "author": "Michael Hoareau",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mihoadiego/Node_Project/issues"
+  },
+  "homepage": "https://github.com/mihoadiego/Node_Project#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
