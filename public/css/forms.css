@@ -1,0 +1,52 @@
+.form-control {
+    margin: 1rem 0;
+}
+
+.form-control label,
+.form-control input,
+.form-control textarea {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.form-control input,
+.form-control textarea {
+    border: 1px solid #037896;
+    font: inherit;
+    border-radius: 2px;
+}
+.form-control input:focus,
+.form-control textarea:focus {
+    border: 1px solid #f59f8f;
+    font: inherit;
+    border-radius: 2px;
+    outline: none !important;
+    box-shadow: 0 0 10px #f7c1b7
+}
+
+
+.form-control-checkbox {
+    margin: 1rem 0;
+    display: flex;
+}
+
+.form-control-checkbox label,
+.form-control-checkbox input {
+    display: flex;
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.form-control-checkbox input {
+    border: 1px solid #037896;
+    font: inherit;
+    border-radius: 2px;
+    flex: 0.5;
+}
+
+.form-control-checkbox input:focus {
+    font: inherit;
+    border-radius: 2px;
+    outline: none !important;
+}

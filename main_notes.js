@@ -35,4 +35,37 @@
  *                  app.use(bodyParser.urlencoded({extended: false}))
  * 
  * 
+ * 
+ * 
+ * TEMPLATING WITH THREE DIFFERENT AVAILABLE LIBRAIRIES :   EJS   PUG AND HANDLEBARS
+ *          npm install --save ejs pug express-handlebars
+ *              => we will use ejs finally. how ?
+ *                  by adding into /app.js the following 
+ *                      app.set('view engine', 'ejs');
+ *                      app.set('views', 'views'); 
+ *                  by then using the render() methods in our routes/admin.js and routes/shop.js file for example 
+ *                  telling where to find the template as first arg, and one object containing all desired props as second arg
+ *                      router.get('/', (req, res, next) => {
+                            const products = adminData.products;
+ *                          res.render('shop', {
+ *                              prods: products, pageTitle: 'Shop', path: '/', hasProducts: products.length > 0, activeShop: true, productCSS: true
+ *                          }) 
+ *                      });
+ * 
+ * 
+ * READ and uplaod FILES ... NOT IMPLEMENTED YET
+ *          npm i --save multer         
+ *              => we created a middleware in /middleware/fileUpload.js 
+ *                      in which we imported multer and handle the multer
+ *                      please not that we export the userFileUpload in such fileUpload.js file, by adding () at the end, 
+ *                      why () at the end?  =>   to directly execute it once importing it! 
+ *              => and then, /middleware/fileUpload.js has been written using multer.diskSotrage...
+ *                      ... we can import it in our router and put it in the  dedicated 2nd param array => 
+ *                      through router.post("/add-product", [USERFILEUPLOAD], post_Controller_AddProduct) 
+ *                      the post_Controller_AddProduct is then called, coming from the /controllers/admin.js 
+ *                      in which we take advantage of the actions led by the previous middleware executed (fileUpload...) 
+ *                      to then do the logic.
+ * 
+ * 
+ * 
  */

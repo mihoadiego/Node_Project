@@ -4,12 +4,14 @@
  * =================================================================================================================
 */
 const { port } = require('./config') 
+
 /**
 * =================================================================================================================
  * be able to read file directories in our app => thanks to the standard path library
  * =================================================================================================================
  */
 const path = require('path')
+
 /**
  * =================================================================================================================
  * create an express app => thanks to the express library
@@ -17,6 +19,15 @@ const path = require('path')
 */
 const express = require('express')
 const app = express()
+
+/**
+ * =================================================================================================================
+ * templating to render our static html files with ejs here, thanks to app.set (to set a global configraution value).  
+ * =================================================================================================================  
+ */
+app.set('view engine', 'ejs')   //  'view engine' arg: generic arg to tell which templating engine to use
+app.set('views', 'views')       // 'views' arg: generic arg to tell where to find those templating models
+
 
 /**
  * =================================================================================================================
@@ -36,15 +47,25 @@ app.use(bodyParser.urlencoded({extended: false}))
         // server.listen(port, ()=>{console.log(`server listening on port ${port}`)})
 
 /**
+ * Allow static files 'reading'. For example to make href link work in  <Link ref='stylesheet href='/public/css/main.css' > in /views/404.html
+ */
+app.use(express.static(path.join(__dirname, 'public')));
+
+/**
+ * import controllers methods that we be executed for default route (ie not defined routes, ie errors)
+ */
+ const {get_Controller_404error} = require('./controllers/error')
+
+/**
  * =================================================================================================================
  * take advantages of express-router library
  * =================================================================================================================
  */
-
 const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 app.use('/admin',adminRoutes)
 app.use(shopRoutes)
-app.use((req, res, next) =>{res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));}) // no need to use './utils/path here' as we directly are at the root
+app.use(get_Controller_404error) // for all non defined routes
+
 
 app.listen(port, ()=>{console.log(`server listening on port ${port}`)})
