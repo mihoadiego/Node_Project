@@ -27,7 +27,8 @@
                             <% if (product.isActive) {%><p class="product__description">Active Product</p> <% } else { %><p class="product__description">Inactive Product</p><% } %>
                         </div>
                         <div class="card__actions">
-                            <button class="btn">Add to Cart</button>
+                            <!-- When in a loop, we need to pass product as second arg to include(), cause not natural if in loop to pass to another .ejs file -->
+                            <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                         </div>
                     </article>
                 <% } %>

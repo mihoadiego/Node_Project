@@ -51,6 +51,11 @@ exports.get_Controller_Cart = (req, res, next) => {
     res.render('shop/cart', {path: '/cart', pageTitle: 'Your Cart'});
 };
 
+exports.post_Controller_Cart = (req, res, next) => {
+    console.log(req.body.productId)
+    res.redirect('/cart')
+};
+
 exports.get_Controller_Checkout = (req, res, next) => {
     res.render('shop/checkout', {path: '/checkout',pageTitle: 'Checkout'});
 };
