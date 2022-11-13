@@ -28,9 +28,11 @@
             </div>
             <div class="form-control-checkbox">                
                 <label for="isActive">Confirm visibility of the product</label>
-                <input type="checkbox" id="isActive" name="isActive" value="isActive">
+                <input type="checkbox" id="isActive" name="isActive" value="isActive" <%= editing && product?.isActive ? "checked" : "" %>>
             </div>
-
+            <% if (editing) { %>
+                <input type="hidden" name="productId" value="<%= product.id %>">
+            <% } %>
             <button class="btn" type="submit"><% if(editing) {%>Update Product<% } else {%>Add Product<% }   %></button>
         </form>
     </main>

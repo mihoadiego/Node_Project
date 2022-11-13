@@ -17,11 +17,12 @@ const getProductsFromFile = cb => {
 
 function uniqueID() {
   return Math.floor(Math.random() * Date.now())
-  }
+}
 
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price, isActive) {
+  constructor(id, title, imageUrl, description, price, isActive) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description= description;
@@ -29,14 +30,20 @@ module.exports = class Product {
     this.isActive = isActive;
   }
 
-  save() {
-    this.id= uniqueID().toString();
+  save() { 
+    // save () both managing creation and edition. if id, update, otherwise create
     getProductsFromFile((products) => {
-            products.push(this);
-            fs.writeFile(p, JSON.stringify(products), err => {console.log(err);
-            });
-        }
-    );
+      const updatedProducts = [...products];
+      if(this.id) {
+        const existingProductIndex = products.findIndex(p => p.id == this.id)
+        updatedProducts[existingProductIndex] = this;
+      } else {
+        this.id= uniqueID().toString();
+        updatedProducts.push(this);
+      }
+      fs.writeFile(p, JSON.stringify(updatedProducts), err => {console.log(err);
+      });
+    });
   }
 
   static fetchAll(cb) {

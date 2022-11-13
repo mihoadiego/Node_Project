@@ -48,9 +48,11 @@ exports.get_AdminController_EditProduct = (req, res, next) => {
        * ... and secondly the props/variables to pass to such templating
        */
 
-      const editMode = req.query.edit // get here the query param value for 'edit' in the url. to be sure that we are asking for an edit Page
-      // example: localhost:3000/admin/edit-product/48715214525?edit=true&initial=false
-      // editMode = req.query.edit    =>>>  editMode will then be equal to 'true' (in string format) 
+      const editMode = req.query.edit 
+      // get here the query param value for 'edit' in the url. to be sure that we are asking for an edit Page
+      // we set the edit=true in the views/admin/products.ejs where we have a   <a href="/admin/edit-product/<%=product.id%>?edit=true" class="btn">Edit</a> 
+      // example of url: localhost:3000/admin/edit-product/48715214525?edit=true
+      // to be noticed: editMode = req.query.edit    =>>>  editMode will then be equal to 'true' and not true (in string format) 
       if (!editMode) return res.redirect('/')
 
       const productId = req.params.productId // directly linked to routes/admin.js where we have router.get('/edit-product/:productId', get_AdminController_EditProduct);
@@ -58,7 +60,6 @@ exports.get_AdminController_EditProduct = (req, res, next) => {
       Product.findProductById(
         productId, 
         (product) => { // callback Function of the findProductById method in the Product model
-          console.log('espana', product)
           if (!product) return res.redirect('/')
           res.render('admin/edit-product', { //  admin/edit-product and admin/add-product being as a reminder grouped into one. thus admin/edit-product.ejs is an ejs model both for add and edit product issues
             pageTitle: 'Edit Product',
@@ -71,9 +72,7 @@ exports.get_AdminController_EditProduct = (req, res, next) => {
             })
         }
       )
-  };
-
-
+};
 
 exports.post_AdminController_AddProduct = (req, res, next) => {
 /**
@@ -83,7 +82,7 @@ exports.post_AdminController_AddProduct = (req, res, next) => {
  */ 
    const {title, imageUrl, description, price, isActive} = req.body;
    if (title?.length > 0 && description?.length > 0 && price?.length > 0) {
-        const product = new Product(title, imageUrl, description, price, isActive);
+        const product = new Product(null, title, imageUrl, description, price, isActive); // null because no id yet so setting id to null
         product.save();
         res.redirect('/');
    }
@@ -98,3 +97,28 @@ exports.get_AdminController_Products = (req, res, next) => {
     });
   });
 };
+
+exports.post_AdminController_EditProduct = (req, res, nex) => {
+  const {
+    productId: productIdUpdated, 
+    title: titleUpdated, 
+    imageUrl: imageUrlUpdated, 
+    description: descriptionUpdated, 
+    price: priceUpdated, 
+    isActive: isActiveUpdated 
+  } = req.body;
+
+  const productUpdated = new Product(
+    productIdUpdated,
+    titleUpdated,
+    imageUrlUpdated,
+    descriptionUpdated,
+    priceUpdated,
+    isActiveUpdated
+  );
+
+  productUpdated.save();
+
+  res.redirect('/admin/products')
+
+}
