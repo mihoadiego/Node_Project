@@ -51,6 +51,15 @@
  *                              prods: products, pageTitle: 'Shop', path: '/', hasProducts: products.length > 0, activeShop: true, productCSS: true
  *                          }) 
  *                      });
+ *              some reminders about ejs
+ * 
+ *                  <% %> is executed without any problem into value    like <input value="<%if (editing) {%>" .... /> 
+ *                  but to read variable (here product), within this string, we need to put an =   like    <%=product.title %> with an equal though     
+ *                  and as a reminder, to read instruction like include, we need to put an -   like     <%-  %>  
+ *                  and to do loops, we can for example do       <% for (let product of prods) { %>     
+ * 
+ * 
+ * 
  * 
  * 
  * READ and uplaod FILES ... NOT IMPLEMENTED YET
@@ -68,4 +77,20 @@
  * 
  * 
  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+                            
  */

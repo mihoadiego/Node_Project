@@ -1,6 +1,7 @@
 <!-- Post Method automatically provides a req.body. So adding a hidden input helps us passing the data through this req.body -->
 <!-- thus, by providing a name productId and a value corresponding to the current product being consulted, we -->
 <!-- then confirm that we'll have a req.body.productId = product.id -->
+
 <form action="/cart" method="post">
     <button class="btn" type="submit">Add to Cart</button>
     <input type="hidden" name="productId" value="<%= product.id %>">

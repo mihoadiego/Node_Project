@@ -24,14 +24,55 @@ exports.get_AdminController_AddProduct = (req, res, next) => {
      * ... that first tell which template to use (confere app.js => app.set('view engine') + app.set('views')) (here shop in /views/shop.ejs )
      * ... and secondly the props/variables to pass to such templating
      */
-    res.render('admin/add-product', {
+    res.render('admin/edit-product', { // as admin/add-product and admin/edit-product were rendering same info, we grouped it in only one admin/edit-product. thus admin/edit-product.ejs is an ejs model both for add and edit product issues
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     formsCSS: true,
     productCSS: true,
-    activeAddProduct: true
+    activeAddProduct: true,
+    editing: false
     });
 };
+
+exports.get_AdminController_EditProduct = (req, res, next) => {
+  /**
+   * if not using templating , (ie without ejs), an html file /views/add-product.html is required and will be rendered thanks to sendFile and path.join()  
+   * path is used to be able to read file directories in this app, and then redirect to such files to provide our routes responses
+   * path.join() handles efficiently both linux + windows + mac path syntaxes! / VS \ and makes it possible to use ../ to go one level up for example
+   */ 
+  // res.status(200).sendFile(path.join(rootDir, 'views', 'add-product.html'));
+  
+      /**
+       * if using templating with ejs, we will take advantage of .render() method, 
+       * ... that first tell which template to use (confere app.js => app.set('view engine') + app.set('views')) (here shop in /views/shop.ejs )
+       * ... and secondly the props/variables to pass to such templating
+       */
+
+      const editMode = req.query.edit // get here the query param value for 'edit' in the url. to be sure that we are asking for an edit Page
+      // example: localhost:3000/admin/edit-product/48715214525?edit=true&initial=false
+      // editMode = req.query.edit    =>>>  editMode will then be equal to 'true' (in string format) 
+      if (!editMode) return res.redirect('/')
+
+      const productId = req.params.productId // directly linked to routes/admin.js where we have router.get('/edit-product/:productId', get_AdminController_EditProduct);
+
+      Product.findProductById(
+        productId, 
+        (product) => { // callback Function of the findProductById method in the Product model
+          console.log('espana', product)
+          if (!product) return res.redirect('/')
+          res.render('admin/edit-product', { //  admin/edit-product and admin/add-product being as a reminder grouped into one. thus admin/edit-product.ejs is an ejs model both for add and edit product issues
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            editing: editMode, // to differentiate addProduct and EditProduct. for ex. used in admin/edit-product.ejs file to adapt inner text of action/submit button ...
+            product: product, 
+            formsCSS: true,
+            productCSS: true,
+            activeAddProduct: true
+            })
+        }
+      )
+  };
+
 
 
 exports.post_AdminController_AddProduct = (req, res, next) => {

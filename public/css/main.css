@@ -21,6 +21,7 @@ form {
 
 .centered {
     text-align: center;
+    max-width: 50%; /* added */
 }
 
 .main-header {
@@ -173,7 +174,8 @@ display: none;
 
 .card__image img,
 .centered .card__image img { /* added */
-  width: 25%;
+  /* width: 25%; */
+  width: 100%;
 }
 
 .card__actions {

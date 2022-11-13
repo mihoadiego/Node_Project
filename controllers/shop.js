@@ -8,9 +8,11 @@ const path = require('path')
 const rootDir = require('../utils/path')
 
 /**
- * import the product model to be able then to instantiate an instance of it
+ * import the product and cart model to be able then to instantiate an instance of it
  */
 const Product = require('../models/product');
+const Cart = require('../models/cart');
+
 const { REPL_MODE_STRICT } = require('repl');
 
 exports.get_Controller_Products = (req, res, next) => {
@@ -52,7 +54,20 @@ exports.get_Controller_Cart = (req, res, next) => {
 };
 
 exports.post_Controller_Cart = (req, res, next) => {
-    console.log(req.body.productId)
+    console.log('Detail req.body.ProductId', req.body.productId)
+    /** 
+     * productId is part of the req.body thanks to the 
+     *      <input type="hidden" name="productId" value="<% =product.id%>"/> 
+     * added to /views/includes/add-to-cart.ejs 
+     * by doing so, we catch a productId in the req.body, 
+     * and as the input is type hidden but gets the product Id as value from the productDetails page, then we have it here!
+     */ 
+    const {productId} = req.body;
+    Product.findProductById(
+        productId,
+        (foundProduct) => {Cart.addProductToCart(productId, foundProduct.price || 0)} //cb function from Product Model => .findProductByid(id, cb) 
+    )
+
     res.redirect('/cart')
 };
 
