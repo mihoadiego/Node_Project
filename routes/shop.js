@@ -13,14 +13,20 @@ const {get_Controller_Index, get_Controller_Products, get_Controller_Cart, post_
  */
 
 router.get('/', get_Controller_Index);
+
 // products
 router.get('/products', get_Controller_Products );
+
 router.get('/products/:productId', get_Controller_ProductDetail)
+
 // cart
 router.get('/cart', get_Controller_Cart);
+
 router.post('/cart', post_Controller_Cart);
+
 //login-checkout
 router.get('/checkout', get_Controller_Checkout);
+
 //orders
 router.get('/orders', get_Controller_Orders)
 

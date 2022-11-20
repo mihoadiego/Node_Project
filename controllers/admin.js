@@ -1,13 +1,13 @@
+
+const path = require('path')
+const rootDir = require('../utils/path')
+
 /*
  * path and rootDir mandatory if not using templating (ie if only using sendFile methods to redirect to .html files)
  * important if not using templating
  *      path is used to be able to read file directories in this app, and then redirect to such files to provide our routes responses
  *      path.join() handles efficiently both linux + windows + mac path syntaxes! / VS \ and makes it possible to use ../ to go one level up for example
  */
-const path = require('path')
-const rootDir = require('../utils/path')
-
-
 const Product = require('../models/product');
 
 
@@ -33,6 +33,15 @@ exports.get_AdminController_AddProduct = (req, res, next) => {
     editing: false
     });
 };
+
+exports.post_AdminController_DeleteProduct = (req, res, next) => {
+  const { productId } = req.body;
+  console.log(productId)
+  Product.deleteById(productId);
+  res.redirect('/admin/products')
+
+}
+
 
 exports.get_AdminController_EditProduct = (req, res, next) => {
   /**

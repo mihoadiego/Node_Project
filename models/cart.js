@@ -41,4 +41,64 @@ module.exports = class Cart {
       );
     });
   }
+
+
+
+  static deleteProductFromCartById(id, productPrice=0, quantityToRemove=null) {
+    // Fetch the previous cart
+    fs.readFile(p, (err, fileContent) => {
+      if(err) return ;
+        // if file could be opened and read, pass its converted content to cart variable .. but if content is empty, do nothing and leave cart with its default value 
+      if (Object.getOwnPropertyNames(fileContent).length === 0) return  
+      const cart = JSON.parse(fileContent);
+
+      // Analyze the cart => Find if product already in the cart or not
+      const associatedProductIndex = cart.products?.findIndex?.(
+        prod => prod.id === id
+      );
+      
+      let associatedProduct;
+      let deducedQuantity = quantityToRemove
+      let message;
+      let newTotalCartPrice;
+
+      // Add new product/ increase quantityToRemove
+      if (associatedProductIndex >= 0 ) {
+        associatedProduct = { ...cart.products[associatedProductIndex] };  
+        cart.products = [...cart.products];
+      
+        if (deducedQuantity !== null){
+          
+          //deduce quantity. if quantity > existing cart quantity... return qty = 0
+          deducedQuantity = quantityToRemove <= associatedProduct.qty 
+            ? quantityToRemove 
+            : +associatedProduct.qty;
+          
+          associatedProduct.qty = +associatedProduct.qty -  deducedQuantity;
+          cart.products[associatedProductIndex] = associatedProduct;
+          message = `deducing ${deducedQuantity} units from cart, for ProductId ${id}`
+
+        } else {
+          
+          //if no quantity, means that complete deletion to be processed
+          deducedQuantity = associatedProduct.qty;
+          cart.products = [...cart.products?.filter?.(p => p.id!==id)];
+          message = `deleting ${id} definitely from cart`;
+
+        }
+      
+        newTotalCartPrice = cart.totalPrice - (+deducedQuantity * +productPrice);
+
+        console.log(`CART UPDATE: initial amount:${cart.totalPrice} / new total:${newTotalCartPrice}. Associated actions: ${message}`);
+        
+        cart.totalPrice = newTotalCartPrice;
+        
+        fs.writeFile(
+          p, 
+          JSON.stringify(cart), 
+          err => {console.log(err)}
+        );
+      }
+    });
+  }
 };
