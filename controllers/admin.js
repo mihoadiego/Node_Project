@@ -56,21 +56,17 @@ exports.get_AdminController_EditProduct = async (req, res, next) => {
 
       const productId = req.params.productId // directly linked to routes/admin.js where we have router.get('/edit-product/:productId', get_AdminController_EditProduct);
 
-      Product.findProductById(
-        productId, 
-        (product) => { // callback Function of the findProductById method in the Product model
-          if (!product) return res.redirect('/')
-          res.render('admin/edit-product', { //  admin/edit-product and admin/add-product being as a reminder grouped into one. thus admin/edit-product.ejs is an ejs model both for add and edit product issues
-            pageTitle: 'Edit Product',
-            path: '/admin/edit-product',
-            editing: editMode, // to differentiate addProduct and EditProduct. for ex. used in admin/edit-product.ejs file to adapt inner text of action/submit button ...
-            product: product, 
-            formsCSS: true,
-            productCSS: true,
-            activeAddProduct: true
-            })
-        }
-      )
+      const product = await Product.findProductById(productId)
+      if (!product) return res.redirect('/')
+      res.render('admin/edit-product', { //  admin/edit-product and admin/add-product being as a reminder grouped into one. thus admin/edit-product.ejs is an ejs model both for add and edit product issues
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: editMode, // to differentiate addProduct and EditProduct. for ex. used in admin/edit-product.ejs file to adapt inner text of action/submit button ...
+        product: product, 
+        formsCSS: true,
+        productCSS: true,
+        activeAddProduct: true
+      })
 };
 
 exports.post_AdminController_AddProduct = (req, res, next) => {

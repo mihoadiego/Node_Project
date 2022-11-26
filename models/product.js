@@ -1,11 +1,9 @@
-const Cart = require('./cart')
-const {db} = require('../database/database.js')
+const Cart = require('./cart');
+const {db, sql} = require('../database/database.js');
+const uniqueID = () =>  Math.floor(Math.random() * Date.now())
 
-
-function uniqueID() {
-  return Math.floor(Math.random() * Date.now())
-}
 module.exports = class Product {
+
   constructor(id, title='', image_url='', description='', price=0, isActive="isActive") {
     this.id = id;
     this.title = title;
@@ -15,31 +13,40 @@ module.exports = class Product {
     this.isActive = isActive;
   }
 
+  // save () both managing creation and edition. if id, update, otherwise create
   save = async () => { 
-    // save () both managing creation and edition. if id, update, otherwise create
-    const fetchedProducts = await db.any(`SELECT * FROM public.products`)
-    if (!this.id || !!fetchedProducts.find(e=>e.id == this.id)) db.none(`
-      INSERT INTO public.products 
-        (title, image_url, description, price) 
-      VALUES 
-        ($[title], $[image_url], $[description], $[price])`, 
-      {title: this.title, image_url: this.image_url, description: this.description, price: this.price}
-    )
+    const fetchedProducts = await db.any(sql.models.product.fetchProductsByState, {status: true})
+    
+    const details = {
+      title: this.title, 
+      image_url: this.image_url, 
+      description: this.description, 
+      price: this.price
+    };
+
+    if (this.id == null || this.id == undefined || fetchedProducts.find(e => e.id == this.id) == undefined) {
+      await db.none(sql.models.product.insertProduct, {...details});
+    } else {
+      await db.none(sql.models.product.updateProductById, {...details, id: this.id});
+    };
+
   }
 
-  static fetchAll = async () => {
+  static fetchAll = async () => { 
     try {
-      const fetchedProducts = await db.any(`SELECT * FROM public.products`)
+      const fetchedProducts = await db.any(sql.models.product.fetchProductsByState, {status: true})
       return fetchedProducts;
     } catch (e) {
       console.log('error while fetching complete list of products:', e)
     }
   }
 
-  static findProductById(id, cb) {
-   
+  static findProductById = async (id, cb) => {
+    const fetchedProduct = await db.oneOrNone(sql.models.product.fetchProductById, {id})
+    return fetchedProduct;
   }
 
-  static deleteById(productId) {
+  static deleteById = async (productId) => {
+    await db.none(sql.models.product.softDeleteProductById , {id: productId})
   }
 };
