@@ -55,48 +55,49 @@ module.exports = class Cart {
         prod => prod.id === id
       );
       
+      if (associatedProductIndex < 0) return;
+
       let associatedProduct;
       let deducedQuantity = quantityToRemove
       let message;
       let newTotalCartPrice;
-
+      
       // Add new product/ increase quantityToRemove
-      if (associatedProductIndex >= 0 ) {
-        associatedProduct = { ...cart.products[associatedProductIndex] };  
-        cart.products = [...cart.products];
-      
-        if (deducedQuantity !== null){
-          
-          //deduce quantity. if quantity > existing cart quantity... return qty = 0
-          deducedQuantity = quantityToRemove <= associatedProduct.qty 
-            ? quantityToRemove 
-            : +associatedProduct.qty;
-          
-          associatedProduct.qty = +associatedProduct.qty -  deducedQuantity;
-          cart.products[associatedProductIndex] = associatedProduct;
-          message = `deducing ${deducedQuantity} units from cart, for ProductId ${id}`
-
-        } else {
-          
-          //if no quantity, means that complete deletion to be processed
-          deducedQuantity = associatedProduct.qty;
-          cart.products = [...cart.products?.filter?.(p => p.id!==id)];
-          message = `deleting ${id} definitely from cart`;
-
-        }
-      
-        newTotalCartPrice = cart.totalPrice - (+deducedQuantity * +productPrice);
-
-        console.log(`CART UPDATE: initial amount:${cart.totalPrice} / new total:${newTotalCartPrice}. Associated actions: ${message}`);
+      associatedProduct = { ...cart.products[associatedProductIndex] };  
+      cart.products = [...cart.products];
+    
+      if (deducedQuantity !== null){
         
-        cart.totalPrice = newTotalCartPrice;
+        //deduce quantity. if quantity > existing cart quantity... return qty = 0
+        deducedQuantity = quantityToRemove <= associatedProduct.qty 
+          ? quantityToRemove 
+          : +associatedProduct.qty;
         
-        fs.writeFile(
-          p, 
-          JSON.stringify(cart), 
-          err => {console.log(err)}
-        );
+        associatedProduct.qty = +associatedProduct.qty -  deducedQuantity;
+        cart.products[associatedProductIndex] = associatedProduct;
+        message = `deducing ${deducedQuantity} units from cart, for ProductId ${id}`
+
+      } else {
+        
+        //if no quantity, means that complete deletion to be processed
+        deducedQuantity = associatedProduct.qty;
+        cart.products = [...cart.products?.filter?.(p => p.id!==id)];
+        message = `deleting ${id} definitely from cart`;
+
       }
+    
+      newTotalCartPrice = cart.totalPrice - (+deducedQuantity * +productPrice);
+
+      console.log(`CART UPDATE: initial amount:${cart.totalPrice} / new total:${newTotalCartPrice}. Associated actions: ${message}`);
+      
+      cart.totalPrice = newTotalCartPrice;
+      
+      fs.writeFile(
+        p, 
+        JSON.stringify(cart), 
+        err => {console.log(err)}
+      );
+    
     });
   }
 

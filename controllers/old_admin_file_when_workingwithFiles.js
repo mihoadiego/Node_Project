@@ -1,3 +1,13 @@
+
+const path = require('path')
+const rootDir = require('../utils/path')
+
+/*
+ * path and rootDir mandatory if not using templating (ie if only using sendFile methods to redirect to .html files)
+ * important if not using templating
+ *      path is used to be able to read file directories in this app, and then redirect to such files to provide our routes responses
+ *      path.join() handles efficiently both linux + windows + mac path syntaxes! / VS \ and makes it possible to use ../ to go one level up for example
+ */
 const Product = require('../models/product');
 
 
@@ -33,7 +43,7 @@ exports.post_AdminController_DeleteProduct = (req, res, next) => {
 }
 
 
-exports.get_AdminController_EditProduct = async (req, res, next) => {
+exports.get_AdminController_EditProduct = (req, res, next) => {
   /**
    * if not using templating , (ie without ejs), an html file /views/add-product.html is required and will be rendered thanks to sendFile and path.join()  
    * path is used to be able to read file directories in this app, and then redirect to such files to provide our routes responses
@@ -79,20 +89,21 @@ exports.post_AdminController_AddProduct = (req, res, next) => {
  *  Indeed, we gave a 'name' props to the <input name="title"> in /views/add-product.html or /views/ADMIN/add-product.ejs if using templating
  *  thus req.body.title exists containing the data typed in in the input when submiting it
  */ 
-   const {title, image_url, description, price, isActive} = req.body;
+   const {title, imageUrl, description, price, isActive} = req.body;
    if (title?.length > 0 && description?.length > 0 && price?.length > 0) {
-        const product = new Product(null, title, image_url, description, price, isActive); // null because no id yet so setting id to null
+        const product = new Product(null, title, imageUrl, description, price, isActive); // null because no id yet so setting id to null
         product.save();
         res.redirect('/');
    }
 };
 
-exports.get_AdminController_Products = async (req, res, next) => {
-  const fetchedProducts = await Product.fetchAll();
-  res.render('admin/products', {
-    prods: fetchedProducts,
-    pageTitle: 'Admin Products',
-    path: '/admin/products'
+exports.get_AdminController_Products = (req, res, next) => {
+  Product.fetchAll(products => {
+    res.render('admin/products', {
+      prods: products,
+      pageTitle: 'Admin Products',
+      path: '/admin/products'
+    });
   });
 };
 
@@ -100,7 +111,7 @@ exports.post_AdminController_EditProduct = (req, res, nex) => {
   const {
     productId: productIdUpdated, 
     title: titleUpdated, 
-    image_url: image_url_updated, 
+    imageUrl: imageUrlUpdated, 
     description: descriptionUpdated, 
     price: priceUpdated, 
     isActive: isActiveUpdated 
@@ -109,7 +120,7 @@ exports.post_AdminController_EditProduct = (req, res, nex) => {
   const productUpdated = new Product(
     productIdUpdated,
     titleUpdated,
-    image_url_updated,
+    imageUrlUpdated,
     descriptionUpdated,
     priceUpdated,
     isActiveUpdated

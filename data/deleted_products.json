@@ -1,1 +1,18 @@
-[{"id":"48715214525","title":"Red hat","imageUrl":"https://www.publicdomainpictures.net/pictures/450000/velka/woman-in-red-hat.jpg","description":"Amazing redhat programing system","price":"179.50","isActive":"isActive"}]
+[
+    {
+        "id":"48715214525",
+        "title":"Red hat",
+        "imageUrl":"https://www.publicdomainpictures.net/pictures/450000/velka/woman-in-red-hat.jpg",
+        "description":"Amazing redhat programing system",
+        "price":"179.50",
+        "isActive":"isActive"
+    },
+    {
+        "id":"1397181944815",
+        "title":"to be deleted",
+        "imageUrl":"",
+        "description":"test to check if product can be deleted",
+        "price":"80",
+        "isActive":"isActive"
+    }
+]

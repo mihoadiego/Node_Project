@@ -17,14 +17,24 @@ const Cart = require('../models/cart');
 
 
 
-exports.get_Controller_Products = async (req, res, next) => { 
+exports.get_Controller_Products = async (req, res, next) => {
+/**
+ * if not using templating , (ie without ejs), an html file /views/shop.html is required and will be rendered thanks to sendFile and path.join()  
+ * path is used to be able to read file directories in this app, and then redirect to such files to provide our routes responses
+ * path.join() handles efficiently both linux + windows + mac path syntaxes! / VS \ and makes it possible to use ../ to go one level up for example
+ */ 
+    // res.status(200).sendFile(path.join(rootDir, 'views', 'shop.html')); 
+    
 /**
  * if using templating with ejs, we will take advantage of .render() method, 
  * ... that first tell which template to use (confere app.js => app.set('view engine') + app.set('views')) (here shop in /views/shop.ejs )
  * ... and secondly the props/variables to pass to such templating
  */
-    const fetchedProducts = await Product.fetchAll(); 
-    res.render('shop/product-list', {prods: fetchedProducts, pageTitle: 'All Products', path: '/products'});
+   
+    Product.fetchAll((products) => { 
+        // we pass a ()=>{} to fetchAll, that renders templating, because fetchAll in the Product Class takes a callback function as argument
+        res.render('shop/product-list', {prods: products, pageTitle: 'All Products', path: '/products'});
+    });
 }
 
 exports.get_Controller_ProductDetail = (req, res, next) =>{
@@ -33,11 +43,13 @@ exports.get_Controller_ProductDetail = (req, res, next) =>{
     Product.findProductById(productId, (product) =>{console.log('Details', product); res.render('shop/product-detail', {product, pageTitle: `details - ${product?.title}`, path:'/products'})})
 }
 
-exports.get_Controller_Index = async (req, res, next) => {
-    const fetchedProducts = await Product.fetchAll(); 
-    res.render('shop/index', {prods: fetchedProducts, pageTitle: 'Shop',path: '/'});
+exports.get_Controller_Index = (req, res, next) => {
+// we pass a ()=>{} to fetchAll, that renders templating, because fetchAll in the Product Class takes a callback function as argument
+    Product.fetchAll((products) => {
+            res.render('shop/index', {prods: products, pageTitle: 'Shop',path: '/'});
+        }
+    );
 };
-
 exports.post_Controller_ManageItemCart = (req, res, next) => {
     const {productIdToManageFromCart, productPriceToManageFromCart, productQtyToManageFromCart} = req.body;
     console.log(productIdToManageFromCart,productPriceToManageFromCart,productQtyToManageFromCart)
@@ -59,30 +71,35 @@ exports.post_Controller_ManageItemCart = (req, res, next) => {
     res.redirect('/cart')
 
 }
-exports.get_Controller_Cart = async (req, res, next) => {
-
+exports.get_Controller_Cart = (req, res, next) => {
     Cart.getCartProducts(
-        // getCartProduct(cb) takes a callback function as arg. 
-        async (cart)=> {
-            const fetchedProducts = await Product.fetchAll();
-            const fullCartProductsDetails = [];
-            let ref;
-            for (product of fetchedProducts){
-                ref = cart.products.find(p=>p.id === product.id) 
-                if (ref !== undefined){
-                    fullCartProductsDetails.push({ productData: {...product}, qty: ref.qty });
-                }
-            }
+        // getCartProduct(cb) takes thus a callback function as arg. and within such cb arg, we call Product.fetchAll that also takes a cb as arg 
+        (cart)=> {
 
-            res.render(
-                'shop/cart', 
-                { path: '/cart', 
-                  pageTitle: 'Your Cart',
+            Product.fetchAll(
+                // arg of fetchAll(cb) is also a callback. thus we are in the callback of a callback!
+                (products) => {
+                    const fullCartProductsDetails = [];
+                    let ref;
+                    for (product of products){
+                        ref = cart.products.find(p=>p.id === product.id) 
+                        if (ref !== undefined){
+                            fullCartProductsDetails.push({ productData: {...product}, qty: ref.qty });
+                        }
+                    }
+
+                    res.render(
+                        'shop/cart', 
+                        { path: '/cart', 
+                          pageTitle: 'Your Cart',
                           products: fullCartProductsDetails
+                        }
+                    );
                 }
-            );
-        })
+            )
 
+        }
+    )
 };
 
 exports.post_Controller_Cart = (req, res, next) => {
