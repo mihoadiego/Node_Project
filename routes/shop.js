@@ -4,7 +4,7 @@ const router = express.Router();
 /**
  * import controllers methods that we be executed for each route
  */
-const {get_Controller_Index, get_Controller_Products, get_Controller_Cart, post_Controller_Cart, get_Controller_Checkout, get_Controller_Orders, get_Controller_ProductDetail} = require('../controllers/shop')
+const {get_Controller_Index, get_Controller_Products, get_Controller_Cart, post_Controller_Cart, post_Controller_ManageItemCart, get_Controller_Checkout, get_Controller_Orders, get_Controller_ProductDetail} = require('../controllers/shop')
 
 /**
  * important 
@@ -21,7 +21,7 @@ router.get('/products/:productId', get_Controller_ProductDetail)
 
 // cart
 router.get('/cart', get_Controller_Cart);
-
+router.post('/cart-manage-item', post_Controller_ManageItemCart);
 router.post('/cart', post_Controller_Cart);
 
 //login-checkout

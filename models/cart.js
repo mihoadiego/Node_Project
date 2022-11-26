@@ -6,7 +6,7 @@ const p = path.join(rootDir,'data','cart.json'); // leading to /data/cart.json (
 
 module.exports = class Cart {
 
-  static addProductToCart(id, productPrice) {
+  static addProductToCart(id, productPrice, qties = 1) {
     // Fetch the previous cart
     fs.readFile(p, (err, fileContent) => {
       let cart = { products: [], totalPrice: 0 };
@@ -14,26 +14,26 @@ module.exports = class Cart {
         // if file could be opened and read, pass its converted content to cart variable .. but if content is empty, do nothing and leave cart with its default value 
         Object.getOwnPropertyNames(fileContent).length === 0 ? null : cart = JSON.parse(fileContent);
       }
-
+      console.log('espana cart', cart)
       // Analyze the cart => Find if product already in the cart or not
       const existingProductIndex = cart.products?.findIndex?.(
         prod => prod.id === id
       );
-
+      console.log('espana', existingProductIndex)
       let updatedProduct;
       // Add new product/ increase quantity
       if (existingProductIndex >= 0) {
         const existingProduct = cart.products[existingProductIndex];
         updatedProduct = { ...existingProduct };
-        updatedProduct.qty = updatedProduct.qty + 1;
+        updatedProduct.qty = updatedProduct.qty + +qties;
         cart.products = [...cart.products];
         cart.products[existingProductIndex] = updatedProduct;
       } else {
-        updatedProduct = { id: id, qty: 1 };
+        updatedProduct = { id: id, qty: +qties };
         cart.products = cart.products.length ? [...cart.products, updatedProduct]: [updatedProduct];
       }
       // update total Price of the cart, with this new product. the extra '+' helps converting the format to number
-      cart.totalPrice = cart.totalPrice + +productPrice;
+      cart.totalPrice = cart.totalPrice + (+productPrice * +qties);
       fs.writeFile(
         p, 
         JSON.stringify(cart), 
@@ -41,8 +41,6 @@ module.exports = class Cart {
       );
     });
   }
-
-
 
   static deleteProductFromCartById(id, productPrice=0, quantityToRemove=null) {
     // Fetch the previous cart
@@ -98,6 +96,19 @@ module.exports = class Cart {
           JSON.stringify(cart), 
           err => {console.log(err)}
         );
+      }
+    });
+  }
+
+  static getCartProducts(cb){
+    fs.readFile(p, (err, fileContent) => {
+      if (err) { // ie if file does not exists or if we could not read it, pass an empty array to the callback function
+        cb([]);
+      } else {
+          // if if file could be opened and read, pass its converted content to the callback function .. but if content is empty, pass an empty array to avoid errors
+          Object.getOwnPropertyNames(fileContent).length === 0 
+            ? cb([]) 
+            : cb(JSON.parse(fileContent)) 
       }
     });
   }

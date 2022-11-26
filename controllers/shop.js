@@ -48,9 +48,56 @@ exports.get_Controller_Index = (req, res, next) => {
         }
     );
 };
+exports.post_Controller_ManageItemCart = (req, res, next) => {
+    const {productIdToManageFromCart, productPriceToManageFromCart, productQtyToManageFromCart} = req.body;
+    console.log(productIdToManageFromCart,productPriceToManageFromCart,productQtyToManageFromCart)
+     /** 
+     * productIdToManageFromCart... are part of the req.body thanks to the 
+     *      <input type="hidden" name="productIdToManageFromCart" value="<% =p.productData.id%>"/> 
+     * added to /views/shop/cart.ejs 
+     * by doing so, we catch a productIdToManageFromCart in the req.body, 
+     * and as the input is type hidden but gets the product, then we have it here!
+     */ 
 
+    if(!productQtyToManageFromCart || productQtyToManageFromCart===0 || !productIdToManageFromCart ) return res.redirect('/cart')
+    
+    productQtyToManageFromCart > 0
+        ? Cart.addProductToCart(productIdToManageFromCart, productPriceToManageFromCart || 0, productQtyToManageFromCart )
+        // converting quantity to positive value (Math.abs) when deleteProductFromCartById. why? to be managed by Cart class method deleteProductFromCartById
+        : Cart.deleteProductFromCartById(productIdToManageFromCart,productPriceToManageFromCart, Math.abs(productQtyToManageFromCart))
+
+    res.redirect('/cart')
+
+}
 exports.get_Controller_Cart = (req, res, next) => {
-    res.render('shop/cart', {path: '/cart', pageTitle: 'Your Cart'});
+    Cart.getCartProducts(
+        // getCartProduct(cb) takes thus a callback function as arg. and within such cb arg, we call Product.fetchAll that also takes a cb as arg 
+        (cart)=> {
+
+            Product.fetchAll(
+                // arg of fetchAll(cb) is also a callback. thus we are in the callback of a callback!
+                (products) => {
+                    const fullCartProductsDetails = [];
+                    let ref;
+                    for (product of products){
+                        ref = cart.products.find(p=>p.id === product.id) 
+                        if (ref !== undefined){
+                            fullCartProductsDetails.push({ productData: {...product}, qty: ref.qty });
+                        }
+                    }
+
+                    res.render(
+                        'shop/cart', 
+                        { path: '/cart', 
+                          pageTitle: 'Your Cart',
+                          products: fullCartProductsDetails
+                        }
+                    );
+                }
+            )
+
+        }
+    )
 };
 
 exports.post_Controller_Cart = (req, res, next) => {

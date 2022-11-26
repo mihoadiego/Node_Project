@@ -75,7 +75,8 @@
  *                      in which we take advantage of the actions led by the previous middleware executed (fileUpload...) 
  *                      to then do the logic.
  * 
- * 
+ * MEMO: in express, req.query to get an object of all elements that are in a url after the ? ex:'localhost3000/cart?id=52222&reference=263'
+ *     : in express, req.params to get an object of all elements that are specific in the route. ex: "localhost3000/cart/:id"
  * 
  * 
  * 
