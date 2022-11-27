@@ -93,11 +93,11 @@
  * ===================================================================================================================
  * 
  * CREATE A NEW DATABASE FROM TERMINAL: 
- *              sudo -u postgres createdb udemynodejstutorialdb
- * 
- *      without forgetting to connect as sudo afterwards, to postgres, to then grant all privilegies to postgres' user 'mihoadie'
- *               sudo -u postgres psql 
- *               GRANT ALL PRIVILEGES ON DATABASE udemynodejstutorialdb TO mihoadie; 
+ *              sudo -u postgres psql
+ *          after typing my password, an once connected to psql as sudo user, i tiped  
+ *              CREATE DATABASE udemynodejstutorialdb;
+ *          once database created, i then provided rights to 'mihoadie' user...
+ *              GRANT ALL PRIVILEGES ON DATABASE udemynodejstutorialdb TO mihoadie; 
  * 
  *      reminder terminal command to connect to udemynodejstutorialdb as mihoadie user:
  *               psql -h localhost -d udemynodejstutorialdb -U mihoadie
@@ -139,9 +139,35 @@
  * 
  * 
  * OPTION 2 : WORK WITH ORM LIKE SEQUELIZE
+ *      * installing sequelize and sequelize cli and mandatory pg package
+ *      npm i --save sequelize
+ *      npm install -g sequelize-cli
+ *      npm i --save pg 
+ *
+ *
+ *      *understanding sequelize
+ *      all config done into .sequelizerc
  * 
+ *      * main command used after setting the config from .sequelizerc:
+ *              // to initialize sequelize. Automatically created /models folder +  2 subfolder within database folder (migrations/seeders)
+ *              // BE CAREFUL, AFTER running sequelize init,  sometimes the node_project/config/database.js file is overwritten automatically
+ *              // thus keeping a copy to then change it back to our config values can be necessary
+ *          sequelize init
+ *              
+ *              // then i generated my model
+ *          sequelize model:create --name product --attributes title:string,price:double,image_url:string,description:string,is_active:boolean
+ *             // then i went to node_project/database/migrations/20221127184135-create-product.js 
+ *             // to modify a bit the table / columns (defaults values...)
+ *             // and then i run my migration
+ *          sequelize db:migrate  
+ *          sequelize seed:create --name products
+ *              // once seed create, i went to node_project/database/seeders/202221127184823-products.js to populate a bit the table
+ *          sequelize db:seed:all
  * 
- * 
- * 
- * 
+ * ===================
+ *  IMPORTANT: need to add to each 'product MODEL query the 
+ *          attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
+ * because I made mistake WHEN redoing a sequelize init --force a second time 
+ * thus always requesting for createdAt unexisting column if not adding attributes throwing then an error 
+ * ===================
  */

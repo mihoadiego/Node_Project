@@ -12,9 +12,17 @@ const {db} = require('../withpgpromise_database/database.js')
 /**
  * import the product and cart model to be able then to instantiate an instance of it
  */
-const Product = require('../manualModelManagement/models/product');
+// const Product = require('../manualModelManagement/models/product'); // when using pg_promise
 const Cart = require('../manualModelManagement/models/cart');
 
+const Product = require('../models').product;
+const { request } = require('express');
+const sequelize = require('sequelize')
+
+
+// need to add to each product query the 
+// attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
+// because made mistake at sequelize init thus always requesting for createdAt unexisting column if not adding attributes
 
 
 exports.get_Controller_Products = async (req, res, next) => { 
@@ -23,7 +31,16 @@ exports.get_Controller_Products = async (req, res, next) => {
  * ... that first tell which template to use (confere app.js => app.set('view engine') + app.set('views')) (here shop in /views/shop.ejs )
  * ... and secondly the props/variables to pass to such templating
  */
-    const fetchedProducts = await Product.fetchAll(); 
+    // const fetchedProducts = await Product.fetchAll(); // when using pg_promise
+    const fetchedProducts = await Product.findAll({
+        attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
+        where: {
+            is_active: {
+                [sequelize.Op.eq]: true
+            }
+        },
+        order: sequelize.literal('created_at DESC')
+    });  
     res.render(
         'shop/product-list', 
         {
@@ -37,7 +54,14 @@ exports.get_Controller_Products = async (req, res, next) => {
 exports.get_Controller_ProductDetail = async (req, res, next) => {
     // req.params.productId because we defined the param this way in /routes/shop.js => router.get('/products/:productId'...)
     const {productId} = req.params;
-    const fetchedProductDetails = await Product.findProductById(productId);
+
+    // const fetchedProductDetails = await Product.findProductById(productId); //when using pg_promise
+
+    const fetchedProductDetails = await Product.findOne({
+        attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
+        where:{id: productId}
+    })
+
     res.render(
         'shop/product-detail', 
         {
@@ -49,7 +73,16 @@ exports.get_Controller_ProductDetail = async (req, res, next) => {
 }
 
 exports.get_Controller_Index = async (req, res, next) => {
-    const fetchedProducts = await Product.fetchAll(); 
+    // const fetchedProducts = await Product.fetchAll(); // when using pg_promise
+    const fetchedProducts = await Product.findAll({
+        attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
+        where: {
+            is_active: {
+                [sequelize.Op.eq]: true
+            }
+        },
+        order: sequelize.literal('created_at DESC')
+    });  
     res.render(
         'shop/index', 
         {

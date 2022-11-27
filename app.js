@@ -12,6 +12,7 @@ const { port } = require('./config')
  */
 const path = require('path')
 
+
 /**
  * =================================================================================================================
  * create an express app => thanks to the express library
@@ -56,6 +57,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  */
  const {get_Controller_404error} = require('./controllers/error')
 
+
 /**
  * =================================================================================================================
  * take advantages of express-router library
@@ -66,6 +68,5 @@ const shopRoutes = require('./routes/shop')
 app.use('/admin',adminRoutes)
 app.use(shopRoutes)
 app.use(get_Controller_404error) // for all non defined routes
-
 
 app.listen(port, ()=>{console.log(`server listening on port ${port}`)})
