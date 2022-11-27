@@ -146,7 +146,48 @@
  *
  *
  *      *understanding sequelize
- *      all config done into .sequelizerc
+ *      all config done into .sequelizerc (sequelizerc then refering in its content to a config/database.js file)
+ *         such config file, for postgres, should contain define params setting timestamps: false
+ *          this will prevent a lot of errors with createdAt automatic sets by sequelize, that do not apply here in postgress
+ *          ex below of such config/database.js file content called within .sequelizerc
+ * 
+                        *   "development": {
+                            "username": userDb,
+                            "password": passwordDb,
+                            "database": nameDb,
+                            "host": hostDb,
+                            "dialect": "postgres",
+                            "logging": false, // socket,
+                            "define": {
+                                "timestamps": false,
+                            }
+                            },
+                            "test": {
+                                "username": userDb,
+                                "password": passwordDb,
+                                "database": nameDb,
+                                "host": hostDb,
+                                "dialect": "postgres",
+                                "logging": false, // socket
+                                "define": {
+                                "timestamps": false,
+                                }
+                            },
+                            "production": {
+                                "username": userDb,
+                                "password": passwordDb,
+                                "database": nameDb,
+                                "host": hostDb,
+                                "dialect": "postgres",
+                                "logging": false, // socket,
+                                "define": {
+                                "timestamps": false,
+                                }
+                            }
+ * 
+ * 
+ * 
+ * 
  * 
  *      * main command used after setting the config from .sequelizerc:
  *              // to initialize sequelize. Automatically created /models folder +  2 subfolder within database folder (migrations/seeders)

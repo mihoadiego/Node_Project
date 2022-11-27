@@ -42,6 +42,24 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('products');
+    // await queryInterface.dropTable('products');
+
+    // code below left this way but useless as the real solution was to add timestamps:false in the config/database.js file!
+    let tableName = 'products';
+    let columnName1 = 'createdAt';
+    let columnName2 = 'updatedAt';
+    return Promise.all([
+      queryInterface.describeTable(tableName)
+        .then(tableDefinition => {
+          if (tableDefinition.columnName1) {/*return Promise.resolve();}*/
+          return queryInterface.removeColumn(tableName, columnName1)}
+        }),
+      queryInterface.describeTable(tableName)
+        .then(tableDefinition => {
+          if (tableDefinition.columnName2) {/*return Promise.resolve();}*/
+            return queryInterface.removeColumn(tableName, columnName2)
+          }
+        }),
+    ]);
   }
 };

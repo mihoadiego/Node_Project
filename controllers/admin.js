@@ -1,4 +1,8 @@
-const Product = require('../manualModelManagement/models/product');
+// const Product = require('../manualModelManagement/models/product'); // when using pg_pomise
+const Product = require('../models').product;
+const { request } = require('express');
+const sequelize = require('sequelize')
+
 
 
 exports.get_AdminController_AddProduct = (req, res, next) => {
@@ -24,14 +28,25 @@ exports.get_AdminController_AddProduct = (req, res, next) => {
     });
 };
 
-exports.post_AdminController_DeleteProduct = (req, res, next) => {
+exports.post_AdminController_DeleteProduct = async (req, res, next) => {
   const { productId } = req.body;
   console.log(productId)
-  Product.deleteById(productId);
+  // Product.deleteById(productId); // when using pg_promise
+
+  await Product.update(
+    {
+      is_active: false
+    }, 
+    {
+      where: {
+        id: productId
+      }
+    }
+  )
+
   res.redirect('/admin/products')
 
 }
-
 
 exports.get_AdminController_EditProduct = async (req, res, next) => {
   /**
@@ -56,7 +71,14 @@ exports.get_AdminController_EditProduct = async (req, res, next) => {
 
       const productId = req.params.productId // directly linked to routes/admin.js where we have router.get('/edit-product/:productId', get_AdminController_EditProduct);
 
-      const product = await Product.findProductById(productId)
+      //const product = await Product.findProductById(productId) // when using pg_promise
+
+      const product = await Product.findOne({
+        attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
+        where:{id: productId}
+      })
+
+
       if (!product) return res.redirect('/')
       res.render('admin/edit-product', { //  admin/edit-product and admin/add-product being as a reminder grouped into one. thus admin/edit-product.ejs is an ejs model both for add and edit product issues
         pageTitle: 'Edit Product',
@@ -77,14 +99,33 @@ exports.post_AdminController_AddProduct = (req, res, next) => {
  */ 
    const {title, image_url, description, price, isActive} = req.body;
    if (title?.length > 0 && description?.length > 0 && price?.length > 0) {
-        const product = new Product(null, title, image_url, description, price, isActive); // null because no id yet so setting id to null
-        product.save();
+        try{
+
+        // when using pg_promise below:
+        // const product = new Product(null, title, image_url, description, price, isActive); // null because no id yet so setting id to null // when using pg_promise
+        // product.save();// when using pg_promise
+        
+        const product = Product.create({title, image_url, description, price, is_active: isActive == 'isActive' ? true: false })
+        
         res.redirect('/');
+        } catch(e){
+          console.log(e)
+        }
+
    }
 };
 
 exports.get_AdminController_Products = async (req, res, next) => {
-  const fetchedProducts = await Product.fetchAll();
+  // const fetchedProducts = await Product.fetchAll(); // when using pg_promise
+  const fetchedProducts = await Product.findAll({
+    attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
+    where: {
+        is_active: {
+            [sequelize.Op.eq]: true
+        }
+    },
+    order: sequelize.literal('created_at DESC')
+  });
   res.render('admin/products', {
     prods: fetchedProducts,
     pageTitle: 'Admin Products',
@@ -92,7 +133,8 @@ exports.get_AdminController_Products = async (req, res, next) => {
   });
 };
 
-exports.post_AdminController_EditProduct = (req, res, nex) => {
+exports.post_AdminController_EditProduct = async (req, res, nex) => {
+  console.log(req.body)
   const {
     productId: productIdUpdated, 
     title: titleUpdated, 
@@ -102,17 +144,38 @@ exports.post_AdminController_EditProduct = (req, res, nex) => {
     isActive: isActiveUpdated 
   } = req.body;
 
-  const productUpdated = new Product(
-    productIdUpdated,
-    titleUpdated,
-    image_url_updated,
-    descriptionUpdated,
-    priceUpdated,
-    isActiveUpdated
-  );
+  
+  try {
 
-  productUpdated.save();
-
-  res.redirect('/admin/products')
-
+    // when using pg_promise:
+    // const productUpdated = new Product(
+    //   productIdUpdated,
+    //   titleUpdated,
+    //   image_url_updated,
+    //   descriptionUpdated,
+    //   priceUpdated,
+    //   isActiveUpdated
+    // );
+    // productUpdated.save(); // when using pg_promise
+    // res.redirect('/admin/products')
+    
+    await Product.update(
+      {
+        id: productIdUpdated, 
+        title: titleUpdated, 
+        price: priceUpdated, 
+        image_url: image_url_updated, 
+        description: descriptionUpdated,
+        is_active: isActiveUpdated == 'isActive' ? true : false,
+      }, 
+      {
+        where: {
+          id: productIdUpdated
+        }
+      }
+    )
+    res.redirect('/admin/products')
+  } catch(e){
+    console.log(e)
+  }
 }

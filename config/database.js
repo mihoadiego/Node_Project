@@ -8,7 +8,10 @@ module.exports = {
       "database": nameDb,
       "host": hostDb,
       "dialect": "postgres",
-      "logging": false // socket
+      "logging": false, // socket,
+      "define": {
+        "timestamps": false,
+      }
     },
     "test": {
         "username": userDb,
@@ -16,7 +19,10 @@ module.exports = {
         "database": nameDb,
         "host": hostDb,
         "dialect": "postgres",
-        "logging": false // socket
+        "logging": false, // socket
+        "define": {
+          "timestamps": false,
+        }
     },
     "production": {
         "username": userDb,
@@ -24,6 +30,9 @@ module.exports = {
         "database": nameDb,
         "host": hostDb,
         "dialect": "postgres",
-        "logging": false // socket
+        "logging": false, // socket,
+        "define": {
+          "timestamps": false,
+        }
     }
   }
