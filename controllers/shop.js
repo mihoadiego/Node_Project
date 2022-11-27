@@ -5,7 +5,7 @@
  *      path.join() handles efficiently both linux + windows + mac path syntaxes! / VS \ and makes it possible to use ../ to go one level up for example
  */
 //  const { REPL_MODE_STRICT } = require('repl');
-const path = require('path')
+const path = require('path');
 const rootDir = require('../utils/path')
 const {db} = require('../database/database.js')
 
@@ -24,31 +24,52 @@ exports.get_Controller_Products = async (req, res, next) => {
  * ... and secondly the props/variables to pass to such templating
  */
     const fetchedProducts = await Product.fetchAll(); 
-    res.render('shop/product-list', {prods: fetchedProducts, pageTitle: 'All Products', path: '/products'});
+    res.render(
+        'shop/product-list', 
+        {
+            prods: fetchedProducts, 
+            pageTitle: 'All Products', 
+            path: '/products'
+        }
+    );
 }
 
-exports.get_Controller_ProductDetail = (req, res, next) =>{
+exports.get_Controller_ProductDetail = async (req, res, next) => {
     // req.params.productId because we defined the param this way in /routes/shop.js => router.get('/products/:productId'...)
-    const {productId} = req.params
-    Product.findProductById(productId, (product) =>{console.log('Details', product); res.render('shop/product-detail', {product, pageTitle: `details - ${product?.title}`, path:'/products'})})
+    const {productId} = req.params;
+    const fetchedProductDetails = await Product.findProductById(productId);
+    res.render(
+        'shop/product-detail', 
+        {
+            product: fetchedProductDetails, 
+            pageTitle: `details - ${fetchedProductDetails?.title}`, 
+            path:'/products'
+        }
+    )
 }
 
 exports.get_Controller_Index = async (req, res, next) => {
     const fetchedProducts = await Product.fetchAll(); 
-    res.render('shop/index', {prods: fetchedProducts, pageTitle: 'Shop',path: '/'});
+    res.render(
+        'shop/index', 
+        {
+            prods: fetchedProducts, 
+            pageTitle: 'Shop',
+            path: '/'
+        }
+    );
 };
 
 exports.post_Controller_ManageItemCart = (req, res, next) => {
+/** 
+ * productIdToManageFromCart... are part of the req.body thanks to the 
+ *      <input type="hidden" name="productIdToManageFromCart" value="<% =p.productData.id%>"/> 
+ * added to /views/shop/cart.ejs 
+ * by doing so, we catch a productIdToManageFromCart in the req.body, 
+ * and as the input is type hidden but gets the product, then we have it here!
+ */ 
+    
     const {productIdToManageFromCart, productPriceToManageFromCart, productQtyToManageFromCart} = req.body;
-    console.log(productIdToManageFromCart,productPriceToManageFromCart,productQtyToManageFromCart)
-     /** 
-     * productIdToManageFromCart... are part of the req.body thanks to the 
-     *      <input type="hidden" name="productIdToManageFromCart" value="<% =p.productData.id%>"/> 
-     * added to /views/shop/cart.ejs 
-     * by doing so, we catch a productIdToManageFromCart in the req.body, 
-     * and as the input is type hidden but gets the product, then we have it here!
-     */ 
-
     if(!productQtyToManageFromCart || productQtyToManageFromCart===0 || !productIdToManageFromCart ) return res.redirect('/cart')
     
     productQtyToManageFromCart > 0
@@ -57,8 +78,8 @@ exports.post_Controller_ManageItemCart = (req, res, next) => {
         : Cart.deleteProductFromCartById(productIdToManageFromCart,productPriceToManageFromCart, Math.abs(productQtyToManageFromCart))
 
     res.redirect('/cart')
-
 }
+
 exports.get_Controller_Cart = async (req, res, next) => {
 
     Cart.getCartProducts(
@@ -82,7 +103,6 @@ exports.get_Controller_Cart = async (req, res, next) => {
                 }
             );
         })
-
 };
 
 exports.post_Controller_Cart = (req, res, next) => {
@@ -104,10 +124,22 @@ exports.post_Controller_Cart = (req, res, next) => {
 };
 
 exports.get_Controller_Checkout = (req, res, next) => {
-    res.render('shop/checkout', {path: '/checkout',pageTitle: 'Checkout'});
+    res.render(
+        'shop/checkout', 
+        {
+            path: '/checkout',
+            pageTitle: 'Checkout'
+        }
+    );
 };
 
 exports.get_Controller_Orders = (req, res, next) => {
-    res.render('shop/orders', {path: '/orders', pageTitle: 'Your Orders'});
+    res.render(
+        'shop/orders', 
+        {
+            path: '/orders', 
+            pageTitle: 'Your Orders'
+        }
+    );
 };
 

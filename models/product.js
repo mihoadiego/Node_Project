@@ -41,7 +41,7 @@ module.exports = class Product {
     }
   }
 
-  static findProductById = async (id, cb) => {
+  static findProductById = async (id) => {
     const fetchedProduct = await db.oneOrNone(sql.models.product.fetchProductById, {id})
     return fetchedProduct;
   }
@@ -49,4 +49,5 @@ module.exports = class Product {
   static deleteById = async (productId) => {
     await db.none(sql.models.product.softDeleteProductById , {id: productId})
   }
+  
 };
