@@ -210,5 +210,9 @@
  *          attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
  * because I made mistake WHEN redoing a sequelize init --force a second time 
  * thus always requesting for createdAt unexisting column if not adding attributes throwing then an error 
+ * 
+ * BUT at the end i fixed the error by adding 'define{timestamps: false}' the listed options of  config/database.js file 
+ * such file config/database.js  being called by .sequelizerc
+ * 
  * ===================
  */
