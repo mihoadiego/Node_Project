@@ -7,13 +7,13 @@
 //  const { REPL_MODE_STRICT } = require('repl');
 const path = require('path')
 const rootDir = require('../utils/path')
-const {db} = require('../database/database.js')
+const {db} = require('../withpgpromise_database/database.js')
 
 /**
  * import the product and cart model to be able then to instantiate an instance of it
  */
-const Product = require('../models/product');
-const Cart = require('../models/cart');
+const Product = require('../manualModelManagement/models/product');
+const Cart = require('../manualModelManagement/models/cart');
 
 
 

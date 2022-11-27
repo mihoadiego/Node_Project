@@ -1,13 +1,13 @@
 const fs = require('fs')
 const path = require('path')
-const rootDir = require('../utils/path') // helper to get the root path of the project
+const rootDir = require('../../utils/path') // helper to get the root path of the project
 
 const p = path.join(rootDir,'data','products.json'); // leading to /data/products.json (readable in every single OS - Mac, linux, windows...)
 const dp = path.join(rootDir, 'data', 'deleted_products.json') // leading to /data/deleted_products.json (readable in every single OS - Mac, linux, windows...)
 
 const Cart = require('./cart')
 
-const {db} = require('../database/database.js')
+const {db} = require('../../withpgpromise_database/database.js')
 
 const getProductsFromFile = cb => {
   fs.readFile(p, (err, fileContent) => {

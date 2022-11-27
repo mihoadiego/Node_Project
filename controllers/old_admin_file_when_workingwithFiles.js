@@ -8,7 +8,7 @@ const rootDir = require('../utils/path')
  *      path is used to be able to read file directories in this app, and then redirect to such files to provide our routes responses
  *      path.join() handles efficiently both linux + windows + mac path syntaxes! / VS \ and makes it possible to use ../ to go one level up for example
  */
-const Product = require('../models/product');
+const Product = require('../manualModelManagement/models/product');
 
 
 exports.get_AdminController_AddProduct = (req, res, next) => {

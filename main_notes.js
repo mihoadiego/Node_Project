@@ -89,9 +89,59 @@
  * 
  * 
  * 
-
-
-
-
-                            
+ * ===================================================================================================================
+ * ===================================================================================================================
+ * 
+ * CREATE A NEW DATABASE FROM TERMINAL: 
+ *              sudo -u postgres createdb udemynodejstutorialdb
+ * 
+ *      without forgetting to connect as sudo afterwards, to postgres, to then grant all privilegies to postgres' user 'mihoadie'
+ *               sudo -u postgres psql 
+ *               GRANT ALL PRIVILEGES ON DATABASE udemynodejstutorialdb TO mihoadie; 
+ * 
+ *      reminder terminal command to connect to udemynodejstutorialdb as mihoadie user:
+ *               psql -h localhost -d udemynodejstutorialdb -U mihoadie
+ * 
+ * 
+ *      then connect such udemynodejstutorialdb Db to dbeaver 
+ *      by simply opening dbeaver and go to base de données -> nouvelle connection --> choose PostgresSql, 
+ *      and then fullfill all requested info 
+ *               Host: localhost 
+ *               port: 5432 
+ *               Database: udemynodejstutorialdb
+ *               Authentication: Database Native 
+ *               Nom utilisateur: mihoadie 
+ *               Mot de Passe: mypassword 
+ *               (in other words the password that we provided when doing alter user mihoadie password 'mypassword' when intalling postgres) 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * OPTION 1: WORK WITH PG PROMISE
+ * 
+ * PG PROMISE 
+ *               npm install --save pg-promise
+ *          
+ *       then we created all the variables to connect efficiently, in the .env file ()
+ *               PORT_DB= 5432
+ *               HOST_DB=localhost
+ *               NAME_DB=udemynodejstutorialdb
+ *               USER_DB=mihoadie
+ *               PASSWORD_DB=xxxxxxxx
+ *               MAX_CONNECTION_DB=30
+ *      
+ *       then create a folder withpgpromise_database, in which we create a database.js file (node_project/withpgpromise_database/database.js) 
+ *        to initialize all pg connections and customize a bit our pg promise (querylogger, sql files handling...)
+ * 
+ *       and finally import db and sql in our files to take profits of sql files {sql.} and pgp queries {db.} through the app
+ * 
+ * 
+ * 
+ * OPTION 2 : WORK WITH ORM LIKE SEQUELIZE
+ * 
+ * 
+ * 
+ * 
+ * 
  */

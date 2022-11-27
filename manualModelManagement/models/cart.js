@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const rootDir = require('../utils/path') // helper to get the root path of the project
+const rootDir = require('../../utils/path') // helper to get the root path of the project
 
 const p = path.join(rootDir,'data','cart.json'); // leading to /data/cart.json (readable in every single OS - Mac, linux, windows...)
 

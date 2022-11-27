@@ -1,4 +1,4 @@
-const Product = require('../models/product');
+const Product = require('../manualModelManagement/models/product');
 
 
 exports.get_AdminController_AddProduct = (req, res, next) => {
