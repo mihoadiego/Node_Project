@@ -1,5 +1,6 @@
 // const Product = require('../manualModelManagement/models/product'); // when using pg_pomise
-const Product = require('../models').product;
+const Product = require('../models').product; // when using migration commands from sequelize
+// const Product = require('../models/product') when managing sequelize manually
 const { request } = require('express');
 const sequelize = require('sequelize')
 
@@ -76,7 +77,7 @@ exports.get_AdminController_EditProduct = async (req, res, next) => {
       const product = await Product.findOne({
         attributes: ['id', 'title', 'price', 'image_url', 'description', 'is_active', 'created_at', 'updated_at'], 
         where:{id: productId}
-      })
+      }) // we could have used req.user.getProducts({where:{id: productId}}) thanks to global middleware set in app.js + the associations set in models. see main_notes (part import to read too from sequelize section) to know more! but warning cause req.user.getProducts will return an Array, not an object then!
 
 
       if (!product) return res.redirect('/')
@@ -99,19 +100,32 @@ exports.post_AdminController_AddProduct = (req, res, next) => {
  */ 
    const {title, image_url, description, price, isActive} = req.body;
    if (title?.length > 0 && description?.length > 0 && price?.length > 0) {
-        try{
+     // when using pg_promise below:
+        //try{
 
-        // when using pg_promise below:
         // const product = new Product(null, title, image_url, description, price, isActive); // null because no id yet so setting id to null // when using pg_promise
         // product.save();// when using pg_promise
-        
-        const product = Product.create({title, image_url, description, price, is_active: isActive == 'isActive' ? true: false })
+        // } catch(e){
+        //   console.log(e)
+        // }
+
+        // instead of doing Product.create({title, image_url, userId: req.user.id ...}), 
+        //    and thanks to the associations set in our models/migrations,
+        //    and also thanks to the global middleware set in app.js, to get req.user everywhere
+        // we can benefit the magic of sequelize'association methods like below 
+
+        // Product.create({title, image_url, description, price, is_active: isActive == 'isActive' ? true: false, userId:  req.user.id })
+        req.user.createProduct({
+          title, 
+          image_url, 
+          description, 
+          price, 
+          is_active: isActive == 'isActive' ? true: false})
+          .then(result=> console.log(result))
+          .catch(err=> console.log(err))
         
         res.redirect('/');
-        } catch(e){
-          console.log(e)
-        }
-
+      
    }
 };
 

@@ -14,12 +14,12 @@ module.exports = class Cart {
         // if file could be opened and read, pass its converted content to cart variable .. but if content is empty, do nothing and leave cart with its default value 
         Object.getOwnPropertyNames(fileContent).length === 0 ? null : cart = JSON.parse(fileContent);
       }
-      console.log('espana cart', cart)
+      console.log('cart', cart)
       // Analyze the cart => Find if product already in the cart or not
       const existingProductIndex = cart.products?.findIndex?.(
         prod => prod.id === id
       );
-      console.log('espana', existingProductIndex)
+      console.log('existing Product Index:', existingProductIndex)
       let updatedProduct;
       // Add new product/ increase quantity
       if (existingProductIndex >= 0) {

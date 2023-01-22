@@ -8,6 +8,7 @@ module.exports = {
       "database": nameDb,
       "host": hostDb,
       "dialect": "postgres",
+      // "camelCase": false,
       "logging": false, // socket,
       "define": {
         "timestamps": false,
@@ -19,6 +20,7 @@ module.exports = {
         "database": nameDb,
         "host": hostDb,
         "dialect": "postgres",
+        // "camelCase": false,
         "logging": false, // socket
         "define": {
           "timestamps": false,
@@ -30,6 +32,7 @@ module.exports = {
         "database": nameDb,
         "host": hostDb,
         "dialect": "postgres",
+        // "camelCase": false,
         "logging": false, // socket,
         "define": {
           "timestamps": false,

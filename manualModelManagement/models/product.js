@@ -34,7 +34,6 @@ module.exports = class Product {
 
   static fetchAll = async () => { 
     try {
-      console.log('coucou')
       const fetchedProducts = await db.any(sql.manualModelManagement.models.product.fetchProductsByState, {status: true})
       return fetchedProducts;
     } catch (e) {
